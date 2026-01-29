@@ -1,0 +1,79 @@
+#include <iostream>
+
+// 親クラス hito
+class hito {
+protected:
+    int step;   // 歩数
+    int level;  // レベル
+
+public:
+    hito() : step(0), level(1) {}
+
+    virtual void move() {
+        step++;  // 歩数 +1
+
+        // レベルアップ判定
+        static int target = 2; // 最初は2
+
+        if (step >= target) {
+            level++;
+            std::cout << "HITO レベルアップ!! ( # step : " << step << " )" << std::endl;
+            std::cout << "HITO Level " << level << std::endl;
+
+            target *= 2; // 次の目標を2倍に
+        }
+    }
+
+    int getStep() const { return step; }
+    int getLevel() const { return level; }
+};
+
+// 子クラス runner
+class runner : public hito {
+private:
+    int m_tired;  // 疲労度
+
+public:
+    runner() : hito(), m_tired(0) {}
+
+    void move() override {
+        // 疲労度が20に達したら休憩（そのターンは動けない）
+        if (m_tired >= 20) {
+            std::cout << "(RUNNER) 動けません！休憩します。" << std::endl;
+            m_tired = 0; // 休憩したら疲労度を0に戻す
+            return;
+        }
+
+        step += 3;
+        m_tired += 3;
+
+        // レベルアップ判定
+        static int target = 2; // 最初は2
+
+        if (step >= target) {
+            level++;
+            std::cout << "RUNNERレベルアップ!! ( # step : " << step << " )" << std::endl;
+            std::cout << "RUNNER Level " << level << std::endl;
+
+            target *= 2; // 次の目標を2倍に
+        }
+    }
+};
+
+// メイン関数
+int main() {
+    hito a;
+    runner b;
+
+    for (int i = 0; i < 10; i++) {
+        std::cout << "move " << i + 1 << "--------------------" << std::endl;
+
+        a.move();
+        b.move();
+
+        std::cout << "  Hito's steps: " << a.getStep()
+            << " -- RUNNER's steps: " << b.getStep() << std::endl;
+    }
+
+    return 0;
+}
